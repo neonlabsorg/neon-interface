@@ -1,5 +1,5 @@
 use abi_stable::{
-    std_types::{ROption, RSlice, RStr},
+    std_types::{ROption, RStr, RVec},
     StableAbi,
 };
 
@@ -26,8 +26,8 @@ pub struct Version1 {
         RPubkey,
         u64,
         u64,
-        RSlice<RAddress>,
-        RSlice<RPubkey>,
+        RVec<RAddress>,
+        RVec<RPubkey>,
     ) -> RNeonCliResult,
     pub get_ether_account_data:
         extern "C" fn(&BoxedConfig, &BoxedContext, &RAddress) -> RNeonCliResult,
@@ -50,6 +50,6 @@ pub struct Version1 {
         RPubkey,
         u64,
         u64,
-        RSlice<RAddress>,
+        RVec<RAddress>,
     ) -> RNeonCliResult,
 }
