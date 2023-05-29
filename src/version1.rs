@@ -1,10 +1,11 @@
 use abi_stable::{
-    std_types::{ROption, RStr, RVec},
+    std_types::{ROption, RResult, RStr, RVec},
     StableAbi,
 };
 
 use crate::types::{
-    BoxedConfig, BoxedContext, RAPIOptions, RAddress, RNeonCliResult, RPubkey, RTxParams, RU256,
+    BoxedConfig, BoxedContext, BoxedNeonCliError, RAPIOptions, RAddress, RNeonCliResult, RPubkey,
+    RTxParams, RU256,
 };
 
 #[repr(C)]
@@ -12,7 +13,7 @@ use crate::types::{
 #[sabi(kind(Prefix))]
 #[sabi(missing_field(panic))]
 pub struct Version1 {
-    pub init_config: extern "C" fn(RAPIOptions) -> BoxedConfig<'static>,
+    pub init_config: extern "C" fn(RAPIOptions) -> RResult<BoxedConfig<'static>, BoxedNeonCliError>,
     pub init_context: extern "C" fn() -> BoxedContext<'static>,
     pub cancel_trx: extern "C" fn(&BoxedConfig, &BoxedContext, RPubkey) -> RNeonCliResult,
     pub collect_treasury: extern "C" fn(&BoxedConfig, &BoxedContext) -> RNeonCliResult,
