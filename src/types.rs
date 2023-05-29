@@ -7,14 +7,14 @@ use solana_sdk::pubkey::Pubkey;
 
 #[repr(C)]
 #[derive(StableAbi)]
-#[sabi(impl_InterfaceType(Sync, Send, Debug, Display))]
+#[sabi(impl_InterfaceType(Sync, Send, Debug))]
 pub struct ConfigOpaque;
 
 pub type BoxedConfig<'borr> = DynTrait<'borr, RBox<()>, ConfigOpaque>;
 
 #[repr(C)]
 #[derive(StableAbi)]
-#[sabi(impl_InterfaceType(Sync, Send, Debug, Display))]
+#[sabi(impl_InterfaceType(Sync, Send, Debug))]
 pub struct ContextOpaque;
 
 pub type BoxedContext<'borr> = DynTrait<'borr, RBox<()>, ContextOpaque>;
