@@ -73,3 +73,28 @@ pub struct RTxParams {
     pub value: ROption<RU256>,
     pub gas_limit: ROption<RU256>,
 }
+
+#[repr(C)]
+#[derive(StableAbi, Clone)]
+pub struct RChDbConfig {
+    pub clickhouse_url: RVec<RString>,
+    pub clickhouse_user: ROption<RString>,
+    pub clickhouse_password: ROption<RString>,
+    pub indexer_host: RString,
+    pub indexer_port: RString,
+    pub indexer_database: RString,
+    pub indexer_user: RString,
+    pub indexer_password: RString,
+}
+
+#[repr(C)]
+#[derive(StableAbi, Clone)]
+pub struct RAPIOptions {
+    pub solana_cli_config_path: ROption<RString>,
+    pub commitment: RString,
+    pub json_rpc_url: RString,
+    pub evm_loader: RString,
+    pub keypair: RString,
+    pub fee_payer: RString,
+    pub db_config: RChDbConfig,
+}
