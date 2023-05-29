@@ -51,5 +51,6 @@ pub struct Version1 {
         u64,
         u64,
         RVec<RAddress>,
+        RVec<RPubkey>,
     ) -> RNeonCliResult,
 }
