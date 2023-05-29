@@ -3,7 +3,9 @@ use abi_stable::{
     StableAbi,
 };
 
-use crate::types::{BoxedConfig, RAddress, RNeonCliResult, RPubkey, RTxParams, RU256};
+use crate::types::{
+    BoxedConfig, BoxedContext, RAddress, RNeonCliResult, RPubkey, RTxParams, RU256,
+};
 
 #[repr(C)]
 #[derive(StableAbi)]
@@ -11,26 +13,38 @@ use crate::types::{BoxedConfig, RAddress, RNeonCliResult, RPubkey, RTxParams, RU
 #[sabi(missing_field(panic))]
 pub struct Version1 {
     pub init_config: extern "C" fn() -> BoxedConfig<'static>,
-    pub cancel_trx: extern "C" fn(&BoxedConfig, &RPubkey) -> RNeonCliResult,
-    pub collect_treasury: extern "C" fn(&BoxedConfig) -> RNeonCliResult,
-    pub create_ether_account: extern "C" fn(&BoxedConfig, &RAddress) -> RNeonCliResult,
-    pub deposit: extern "C" fn(&BoxedConfig, u64, &RAddress) -> RNeonCliResult,
+    pub init_context: extern "C" fn() -> BoxedContext<'static>,
+    pub cancel_trx: extern "C" fn(&BoxedConfig, &BoxedContext, &RPubkey) -> RNeonCliResult,
+    pub collect_treasury: extern "C" fn(&BoxedConfig, &BoxedContext) -> RNeonCliResult,
+    pub create_ether_account:
+        extern "C" fn(&BoxedConfig, &BoxedContext, &RAddress) -> RNeonCliResult,
+    pub deposit: extern "C" fn(&BoxedConfig, &BoxedContext, u64, &RAddress) -> RNeonCliResult,
     pub emulate: extern "C" fn(
         &BoxedConfig,
+        &BoxedContext,
         RTxParams,
         RPubkey,
         u64,
         u64,
         RSlice<RAddress>,
     ) -> RNeonCliResult,
-    pub get_ether_account_data: extern "C" fn(&BoxedConfig, &RAddress) -> RNeonCliResult,
-    pub get_neon_elf: extern "C" fn(&BoxedConfig, ROption<RStr>) -> RNeonCliResult,
-    pub get_storage_at: extern "C" fn(&BoxedConfig, RAddress, &RU256) -> RNeonCliResult,
-    pub init_environment:
-        extern "C" fn(&BoxedConfig, bool, bool, ROption<RStr>, ROption<RStr>) -> RNeonCliResult,
+    pub get_ether_account_data:
+        extern "C" fn(&BoxedConfig, &BoxedContext, &RAddress) -> RNeonCliResult,
+    pub get_neon_elf: extern "C" fn(&BoxedConfig, &BoxedContext, ROption<RStr>) -> RNeonCliResult,
+    pub get_storage_at:
+        extern "C" fn(&BoxedConfig, &BoxedContext, RAddress, &RU256) -> RNeonCliResult,
+    pub init_environment: extern "C" fn(
+        &BoxedConfig,
+        &BoxedContext,
+        bool,
+        bool,
+        ROption<RStr>,
+        ROption<RStr>,
+    ) -> RNeonCliResult,
     #[sabi(last_prefix_field)]
     pub trace: extern "C" fn(
         &BoxedConfig,
+        &BoxedContext,
         RTxParams,
         RPubkey,
         u64,
