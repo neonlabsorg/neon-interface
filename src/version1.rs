@@ -34,6 +34,7 @@ pub struct Version1 {
     pub get_neon_elf: extern "C" fn(&BoxedConfig, &BoxedContext, ROption<RStr>) -> RNeonCliResult,
     pub get_storage_at:
         extern "C" fn(&BoxedConfig, &BoxedContext, RAddress, RU256) -> RNeonCliResult,
+    #[sabi(last_prefix_field)]
     pub init_environment: extern "C" fn(
         &BoxedConfig,
         &BoxedContext,
@@ -41,16 +42,5 @@ pub struct Version1 {
         bool,
         ROption<RStr>,
         ROption<RStr>,
-    ) -> RNeonCliResult,
-    #[sabi(last_prefix_field)]
-    pub trace: extern "C" fn(
-        &BoxedConfig,
-        &BoxedContext,
-        RTxParams,
-        RPubkey,
-        u64,
-        u64,
-        RVec<RAddress>,
-        RVec<RPubkey>,
     ) -> RNeonCliResult,
 }
