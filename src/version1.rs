@@ -33,7 +33,7 @@ pub struct Version1 {
         extern "C" fn(&BoxedConfig, &BoxedContext, &RAddress) -> RNeonCliResult,
     pub get_neon_elf: extern "C" fn(&BoxedConfig, &BoxedContext, ROption<RStr>) -> RNeonCliResult,
     pub get_storage_at:
-        extern "C" fn(&BoxedConfig, &BoxedContext, RAddress, &RU256) -> RNeonCliResult,
+        extern "C" fn(&BoxedConfig, &BoxedContext, RAddress, RU256) -> RNeonCliResult,
     pub init_environment: extern "C" fn(
         &BoxedConfig,
         &BoxedContext,
