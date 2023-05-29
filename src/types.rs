@@ -14,7 +14,7 @@ pub type BoxedConfig<'borr> = DynTrait<'borr, RBox<()>, ConfigOpaque>;
 
 #[repr(C)]
 #[derive(StableAbi)]
-#[sabi(impl_InterfaceType(Sync, Send, Debug))]
+#[sabi(impl_InterfaceType(Debug))]
 pub struct ContextOpaque;
 
 pub type BoxedContext<'borr> = DynTrait<'borr, RBox<()>, ContextOpaque>;
