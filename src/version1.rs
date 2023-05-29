@@ -27,6 +27,7 @@ pub struct Version1 {
         u64,
         u64,
         RSlice<RAddress>,
+        RSlice<RPubkey>,
     ) -> RNeonCliResult,
     pub get_ether_account_data:
         extern "C" fn(&BoxedConfig, &BoxedContext, &RAddress) -> RNeonCliResult,
