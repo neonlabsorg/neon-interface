@@ -14,7 +14,7 @@ use crate::types::{
 pub struct Version1 {
     pub init_config: extern "C" fn() -> BoxedConfig<'static>,
     pub init_context: extern "C" fn() -> BoxedContext<'static>,
-    pub cancel_trx: extern "C" fn(&BoxedConfig, &BoxedContext, &RPubkey) -> RNeonCliResult,
+    pub cancel_trx: extern "C" fn(&BoxedConfig, &BoxedContext, RPubkey) -> RNeonCliResult,
     pub collect_treasury: extern "C" fn(&BoxedConfig, &BoxedContext) -> RNeonCliResult,
     pub create_ether_account:
         extern "C" fn(&BoxedConfig, &BoxedContext, &RAddress) -> RNeonCliResult,
