@@ -36,7 +36,7 @@ pub struct NeonLib {
     pub deposit: extern "C" fn(&BoxedConfig, &BoxedContext, RString) -> RNeonCliResult,
     pub emulate: extern "C" fn(&BoxedConfig, &BoxedContext, RString) -> RNeonCliResult,
     pub get_ether_account_data:
-        extern "C" fn(&BoxedConfig, &BoxedContext, &RString) -> RNeonCliResult,
+        extern "C" fn(&BoxedConfig, &BoxedContext, RString) -> RNeonCliResult,
     pub get_neon_elf: extern "C" fn(&BoxedConfig, &BoxedContext, RString) -> RNeonCliResult,
     pub get_storage_at: extern "C" fn(&BoxedConfig, &BoxedContext, RString) -> RNeonCliResult,
     #[sabi(last_prefix_field)]
