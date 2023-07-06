@@ -1,17 +1,18 @@
 #![allow(non_camel_case_types)]
 
 pub mod types;
-pub mod version1;
 
 use std::{collections::HashMap, path::Path};
 
 use abi_stable::{
     library::{LibraryError, RootModule},
     package_version_strings,
-    std_types::RString,
+    std_types::{RResult, RString},
     StableAbi,
 };
 use thiserror::Error;
+
+use crate::types::{BoxedConfig, BoxedContext, BoxedNeonCliError, RNeonCliResult};
 
 #[repr(C)]
 #[derive(StableAbi)]
@@ -20,8 +21,24 @@ use thiserror::Error;
 pub struct NeonLib {
     pub api_version: u32,
     pub hash: extern "C" fn() -> RString,
+    pub init_config:
+        extern "C" fn(RString) -> RResult<BoxedConfig<'static>, BoxedNeonCliError<'static>>,
+    pub init_context: extern "C" fn(
+        &BoxedConfig,
+        RString,
+    )
+        -> RResult<BoxedContext<'static>, BoxedNeonCliError<'static>>,
+    pub cancel_trx: extern "C" fn(&BoxedConfig, &BoxedContext, RString) -> RNeonCliResult,
+    pub collect_treasury: extern "C" fn(&BoxedConfig, &BoxedContext, RString) -> RNeonCliResult,
+    pub create_ether_account: extern "C" fn(&BoxedConfig, &BoxedContext, RString) -> RNeonCliResult,
+    pub deposit: extern "C" fn(&BoxedConfig, &BoxedContext, RString) -> RNeonCliResult,
+    pub emulate: extern "C" fn(&BoxedConfig, &BoxedContext, RString) -> RNeonCliResult,
+    pub get_ether_account_data:
+        extern "C" fn(&BoxedConfig, &BoxedContext, &RString) -> RNeonCliResult,
+    pub get_neon_elf: extern "C" fn(&BoxedConfig, &BoxedContext, RString) -> RNeonCliResult,
+    pub get_storage_at: extern "C" fn(&BoxedConfig, &BoxedContext, RString) -> RNeonCliResult,
     #[sabi(last_prefix_field)]
-    pub version1: version1::Version1_Ref,
+    pub init_environment: extern "C" fn(&BoxedConfig, &BoxedContext, RString) -> RNeonCliResult,
 }
 
 impl RootModule for NeonLib_Ref {

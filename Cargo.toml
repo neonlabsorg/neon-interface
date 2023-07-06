@@ -7,6 +7,4 @@ edition = "2021"
 
 [dependencies]
 abi_stable = "0.11.1"
-solana-sdk = "~1.14"
-ethnum = { version = "1", default_features = false }
 thiserror = "1"
