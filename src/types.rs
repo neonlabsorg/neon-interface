@@ -21,8 +21,8 @@ pub type BoxedContext<'borr> = DynTrait<'borr, RBox<()>, ContextOpaque>;
 #[repr(C)]
 #[derive(StableAbi)]
 #[sabi(impl_InterfaceType(Sync, Send, Debug, Display))]
-pub struct NeonCliErrorOpaque;
+pub struct NeonErrorOpaque;
 
-pub type BoxedNeonCliError<'borr> = DynTrait<'borr, RBox<()>, NeonCliErrorOpaque>;
+pub type BoxedNeonError<'borr> = DynTrait<'borr, RBox<()>, NeonErrorOpaque>;
 
-pub type RNeonCliResult = LocalFfiFuture<RResult<RString, BoxedNeonCliError<'static>>>;
+pub type RNeonResult = LocalFfiFuture<RResult<RString, BoxedNeonError<'static>>>;
