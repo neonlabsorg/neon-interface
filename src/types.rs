@@ -20,7 +20,7 @@ pub type BoxedContext<'borr> = DynTrait<'borr, RBox<()>, ContextOpaque>;
 
 #[repr(C)]
 #[derive(StableAbi)]
-#[sabi(impl_InterfaceType(Sync, Debug, Display))]
+#[sabi(impl_InterfaceType(Debug, Display))]
 pub struct NeonErrorOpaque;
 
 pub type BoxedNeonError<'borr> = DynTrait<'borr, RBox<()>, NeonErrorOpaque>;
