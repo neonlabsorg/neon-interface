@@ -864,6 +864,7 @@ dependencies = [
  "abi_stable",
  "ethnum",
  "solana-sdk",
+ "thiserror",
 ]
 
 [[package]]

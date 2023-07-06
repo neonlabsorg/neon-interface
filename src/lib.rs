@@ -11,6 +11,7 @@ use abi_stable::{
     std_types::RString,
     StableAbi,
 };
+use thiserror::Error;
 
 #[repr(C)]
 #[derive(StableAbi)]
@@ -31,21 +32,12 @@ impl RootModule for NeonLib_Ref {
     const VERSION_STRINGS: abi_stable::sabi_types::VersionStrings = package_version_strings!();
 }
 
+#[derive(Error, Debug)]
 pub enum NeonLibError {
-    LibraryError(LibraryError),
-    IoError(std::io::Error),
-}
-
-impl From<LibraryError> for NeonLibError {
-    fn from(value: LibraryError) -> Self {
-        NeonLibError::LibraryError(value)
-    }
-}
-
-impl From<std::io::Error> for NeonLibError {
-    fn from(value: std::io::Error) -> Self {
-        NeonLibError::IoError(value)
-    }
+    #[error("abi_stable library error")]
+    LibraryError(#[from] LibraryError),
+    #[error("IO error")]
+    IoError(#[from] std::io::Error),
 }
 
 pub fn load_libraries(directory: &Path) -> Result<HashMap<String, NeonLib_Ref>, NeonLibError> {
