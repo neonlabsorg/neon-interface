@@ -10,7 +10,7 @@ use abi_stable::{
     std_types::{RResult, RString},
     StableAbi,
 };
-use async_ffi::LocalFfiFuture;
+use async_ffi::LocalBorrowingFfiFuture;
 use thiserror::Error;
 
 use crate::types::{BoxedConfig, BoxedContext, BoxedNeonError, RNeonResult};
@@ -25,33 +25,36 @@ pub struct NeonLib {
     pub init_config:
         extern "C" fn(RString) -> RResult<BoxedConfig<'static>, BoxedNeonError<'static>>,
     pub init_context: extern "C" fn(
-        &'static BoxedConfig,
+        &BoxedConfig,
         RString,
     ) -> RResult<BoxedContext<'static>, BoxedNeonError<'static>>,
-    pub init_hash_context: extern "C" fn(
-        &'static BoxedConfig,
+    pub init_hash_context: for<'a> extern "C" fn(
+        &'a BoxedConfig,
         RString,
-    ) -> LocalFfiFuture<
+    ) -> LocalBorrowingFfiFuture<
+        'a,
         RResult<BoxedContext<'static>, BoxedNeonError<'static>>,
     >,
 
     pub cancel_trx:
-        extern "C" fn(&'static BoxedConfig, &'static BoxedContext, RString) -> RNeonResult,
+        for<'a> extern "C" fn(&'a BoxedConfig, &'a BoxedContext, RString) -> RNeonResult<'a>,
     pub collect_treasury:
-        extern "C" fn(&'static BoxedConfig, &'static BoxedContext, RString) -> RNeonResult,
+        for<'a> extern "C" fn(&'a BoxedConfig, &'a BoxedContext, RString) -> RNeonResult<'a>,
     pub create_ether_account:
-        extern "C" fn(&'static BoxedConfig, &'static BoxedContext, RString) -> RNeonResult,
-    pub deposit: extern "C" fn(&'static BoxedConfig, &'static BoxedContext, RString) -> RNeonResult,
-    pub emulate: extern "C" fn(&'static BoxedConfig, &'static BoxedContext, RString) -> RNeonResult,
+        for<'a> extern "C" fn(&'a BoxedConfig, &'a BoxedContext, RString) -> RNeonResult<'a>,
+    pub deposit:
+        for<'a> extern "C" fn(&'a BoxedConfig, &'a BoxedContext, RString) -> RNeonResult<'a>,
+    pub emulate:
+        for<'a> extern "C" fn(&'a BoxedConfig, &'a BoxedContext, RString) -> RNeonResult<'a>,
     pub get_ether_account_data:
-        extern "C" fn(&'static BoxedConfig, &'static BoxedContext, RString) -> RNeonResult,
+        for<'a> extern "C" fn(&'a BoxedConfig, &'a BoxedContext, RString) -> RNeonResult<'a>,
     pub get_neon_elf:
-        extern "C" fn(&'static BoxedConfig, &'static BoxedContext, RString) -> RNeonResult,
+        for<'a> extern "C" fn(&'a BoxedConfig, &'a BoxedContext, RString) -> RNeonResult<'a>,
     pub get_storage_at:
-        extern "C" fn(&'static BoxedConfig, &'static BoxedContext, RString) -> RNeonResult,
+        for<'a> extern "C" fn(&'a BoxedConfig, &'a BoxedContext, RString) -> RNeonResult<'a>,
     #[sabi(last_prefix_field)]
     pub init_environment:
-        extern "C" fn(&'static BoxedConfig, &'static BoxedContext, RString) -> RNeonResult,
+        for<'a> extern "C" fn(&'a BoxedConfig, &'a BoxedContext, RString) -> RNeonResult<'a>,
 }
 
 impl RootModule for NeonLib_Ref {
