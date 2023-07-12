@@ -27,6 +27,11 @@ pub struct NeonLib {
         &'static BoxedConfig,
         RString,
     ) -> RResult<BoxedContext<'static>, BoxedNeonError<'static>>,
+    pub init_hash_context: extern "C" fn(
+        &'static BoxedConfig,
+        RString,
+    )
+        -> RResult<BoxedContext<'static>, BoxedNeonError<'static>>,
 
     pub cancel_trx:
         extern "C" fn(&'static BoxedConfig, &'static BoxedContext, RString) -> RNeonResult,
