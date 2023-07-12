@@ -70,7 +70,10 @@ pub enum NeonLibError {
     IoError(#[from] std::io::Error),
 }
 
-pub fn load_libraries(directory: &Path) -> Result<HashMap<String, NeonLib_Ref>, NeonLibError> {
+pub fn load_libraries<P>(directory: P) -> Result<HashMap<String, NeonLib_Ref>, NeonLibError>
+where
+    P: AsRef<Path>,
+{
     let paths = std::fs::read_dir(directory)?;
     let mut result = HashMap::new();
     for path in paths {
