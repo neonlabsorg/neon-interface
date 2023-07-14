@@ -7,10 +7,10 @@ use std::{collections::HashMap, path::Path};
 use abi_stable::{
     library::{LibraryError, RootModule},
     package_version_strings,
-    std_types::{RResult, RString},
+    std_types::{RArc, RResult, RString},
     StableAbi,
 };
-use async_ffi::BorrowingFfiFuture;
+use async_ffi::FfiFuture;
 use thiserror::Error;
 
 use crate::types::{BoxedConfig, BoxedContext, BoxedNeonError, RNeonResult};
@@ -23,16 +23,15 @@ pub struct NeonLib {
     pub api_version: u32,
     pub hash: extern "C" fn() -> RString,
     pub init_config:
-        extern "C" fn(RString) -> RResult<BoxedConfig<'static>, BoxedNeonError<'static>>,
+        extern "C" fn(RString) -> RResult<RArc<BoxedConfig<'static>>, BoxedNeonError<'static>>,
     pub init_context: extern "C" fn(
-        &BoxedConfig,
+        RArc<BoxedConfig>,
         RString,
     ) -> RResult<BoxedContext<'static>, BoxedNeonError<'static>>,
-    pub init_hash_context: for<'a> extern "C" fn(
-        &'a BoxedConfig,
+    pub init_hash_context: extern "C" fn(
+        RArc<BoxedConfig>,
         RString,
-    ) -> BorrowingFfiFuture<
-        'a,
+    ) -> FfiFuture<
         RResult<BoxedContext<'static>, BoxedNeonError<'static>>,
     >,
 
