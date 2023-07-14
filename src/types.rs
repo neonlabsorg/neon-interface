@@ -2,7 +2,7 @@ use abi_stable::{
     std_types::{RBox, RResult, RString},
     DynTrait, StableAbi,
 };
-use async_ffi::LocalBorrowingFfiFuture;
+use async_ffi::BorrowingFfiFuture;
 
 #[repr(C)]
 #[derive(StableAbi)]
@@ -25,4 +25,4 @@ pub struct NeonErrorOpaque;
 
 pub type BoxedNeonError<'borr> = DynTrait<'borr, RBox<()>, NeonErrorOpaque>;
 
-pub type RNeonResult<'a> = LocalBorrowingFfiFuture<'a, RResult<RString, BoxedNeonError<'static>>>;
+pub type RNeonResult<'a> = BorrowingFfiFuture<'a, RResult<RString, BoxedNeonError<'static>>>;

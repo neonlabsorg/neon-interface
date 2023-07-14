@@ -10,7 +10,7 @@ use abi_stable::{
     std_types::{RResult, RString},
     StableAbi,
 };
-use async_ffi::LocalBorrowingFfiFuture;
+use async_ffi::BorrowingFfiFuture;
 use thiserror::Error;
 
 use crate::types::{BoxedConfig, BoxedContext, BoxedNeonError, RNeonResult};
@@ -31,7 +31,7 @@ pub struct NeonLib {
     pub init_hash_context: for<'a> extern "C" fn(
         &'a BoxedConfig,
         RString,
-    ) -> LocalBorrowingFfiFuture<
+    ) -> BorrowingFfiFuture<
         'a,
         RResult<BoxedContext<'static>, BoxedNeonError<'static>>,
     >,
