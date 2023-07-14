@@ -1,5 +1,5 @@
 use abi_stable::{
-    std_types::{RBox, RResult, RString},
+    std_types::{RArc, RBox, RResult, RString},
     DynTrait, StableAbi,
 };
 use async_ffi::BorrowingFfiFuture;
@@ -23,6 +23,6 @@ pub type BoxedContext<'borr> = DynTrait<'borr, RBox<()>, ContextOpaque>;
 #[sabi(impl_InterfaceType(Debug, Display))]
 pub struct NeonErrorOpaque;
 
-pub type BoxedNeonError<'borr> = DynTrait<'borr, RBox<()>, NeonErrorOpaque>;
+pub type BoxedNeonError<'borr> = DynTrait<'borr, RArc<()>, NeonErrorOpaque>;
 
 pub type RNeonResult<'a> = BorrowingFfiFuture<'a, RResult<RString, BoxedNeonError<'static>>>;
