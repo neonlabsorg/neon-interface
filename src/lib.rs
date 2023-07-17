@@ -24,11 +24,11 @@ pub struct NeonLib {
     pub hash: extern "C" fn() -> RString,
     pub init_config: extern "C" fn(&RStr) -> RResult<BoxedConfig<'static>, BoxedNeonError<'static>>,
     pub init_context: extern "C" fn(
-        BoxedConfig,
+        &BoxedConfig,
         &RStr,
     ) -> RResult<BoxedContext<'static>, BoxedNeonError<'static>>,
     pub init_hash_context: extern "C" fn(
-        BoxedConfig,
+        &BoxedConfig,
         &RStr,
     ) -> FfiFuture<
         RResult<BoxedContext<'static>, BoxedNeonError<'static>>,
