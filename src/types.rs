@@ -1,5 +1,5 @@
 use abi_stable::{
-    std_types::{RArc, RBox, RResult, RString},
+    std_types::{RBox, RResult, RString},
     DynTrait, StableAbi,
 };
 use async_ffi::BorrowingFfiFuture;
@@ -9,7 +9,7 @@ use async_ffi::BorrowingFfiFuture;
 #[sabi(impl_InterfaceType(Sync, Send, Debug, Clone))]
 pub struct ConfigOpaque;
 
-pub type BoxedConfig<'borr> = DynTrait<'borr, RArc<()>, ConfigOpaque>;
+pub type BoxedConfig<'borr> = DynTrait<'borr, RBox<()>, ConfigOpaque>;
 
 #[repr(C)]
 #[derive(StableAbi)]
