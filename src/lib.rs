@@ -10,7 +10,7 @@ use abi_stable::{
     std_types::{RResult, RStr, RString},
     StableAbi,
 };
-use async_ffi::{BorrowingFfiFuture, FfiFuture};
+use async_ffi::BorrowingFfiFuture;
 use thiserror::Error;
 
 use crate::types::{BoxedConfig, BoxedContext, BoxedNeonError, RNeonResult};
