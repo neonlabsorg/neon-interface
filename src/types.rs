@@ -6,7 +6,7 @@ use async_ffi::BorrowingFfiFuture;
 
 #[repr(C)]
 #[derive(StableAbi)]
-#[sabi(impl_InterfaceType(Sync, Send, Debug, Clone))]
+#[sabi(impl_InterfaceType(Sync, Send, Debug))]
 pub struct ConfigOpaque;
 
 pub type BoxedConfig<'borr> = DynTrait<'borr, RBox<()>, ConfigOpaque>;
