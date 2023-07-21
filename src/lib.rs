@@ -20,7 +20,6 @@ use crate::types::{BoxedConfig, BoxedContext, BoxedNeonError, RNeonResult};
 #[sabi(kind(Prefix(prefix_ref = NeonLib_Ref)))]
 #[sabi(missing_field(panic))]
 pub struct NeonLib {
-    pub api_version: u32,
     pub hash: extern "C" fn() -> RString,
     pub init_config: extern "C" fn(&RStr) -> RResult<BoxedConfig<'static>, BoxedNeonError<'static>>,
     pub init_context: extern "C" fn(
