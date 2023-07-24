@@ -22,20 +22,20 @@ use crate::types::{BoxedConfig, BoxedContext, RNeonResult};
 pub struct NeonLib {
     pub hash: extern "C" fn() -> RString,
     pub get_version: extern "C" fn() -> RString,
-    pub init_config: extern "C" fn(&RStr) -> RResult<BoxedConfig<'static>, RString>,
-    pub init_context: extern "C" fn(&BoxedConfig, &RStr) -> RResult<BoxedContext<'static>, RString>,
+    pub init_config: extern "C" fn(RStr) -> RResult<BoxedConfig<'static>, RString>,
+    pub init_context: extern "C" fn(&BoxedConfig, RStr) -> RResult<BoxedContext<'static>, RString>,
     pub init_hash_context:
         for<'a> extern "C" fn(
             &'a BoxedConfig,
-            &'a RStr,
+            RStr<'a>,
         )
             -> BorrowingFfiFuture<'a, RResult<BoxedContext<'static>, RString>>,
 
     pub invoke: for<'a> extern "C" fn(
         &'a BoxedConfig,
         &'a BoxedContext,
-        &'a RStr,
-        &'a RStr,
+        RStr<'a>,
+        RStr<'a>,
     ) -> RNeonResult<'a>,
 }
 
