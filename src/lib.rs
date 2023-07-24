@@ -53,9 +53,27 @@ pub enum NeonLoadLibError {
     LibraryError(#[from] LibraryError),
     #[error("IO error")]
     IoError(#[from] std::io::Error),
+    #[error("InitConfigAndContext error")]
+    InitConfigAndContext(String),
 }
 
-pub fn load_libraries<P>(directory: P) -> Result<HashMap<String, NeonLib_Ref>, NeonLoadLibError>
+pub struct NeonLibGlobals {
+    pub lib: NeonLib_Ref,
+    pub config: BoxedConfig<'static>,
+    pub context: BoxedContext<'static>,
+}
+
+impl From<RString> for NeonLoadLibError {
+    fn from(value: RString) -> Self {
+        NeonLoadLibError::InitConfigAndContext(value.to_string())
+    }
+}
+
+pub fn load_libraries<P>(
+    directory: P,
+    api_config: &str,
+    context_config: &str,
+) -> Result<HashMap<String, NeonLibGlobals>, NeonLoadLibError>
 where
     P: AsRef<Path>,
 {
@@ -64,7 +82,18 @@ where
     for path in paths {
         let lib = NeonLib_Ref::load_from_file(&path?.path())?;
         let hash = lib.hash()();
-        result.insert(hash.into_string(), lib);
+
+        let config = lib.init_config()(RStr::from_str(api_config)).into_result()?;
+        let context = lib.init_context()(&config, RStr::from_str(context_config)).into_result()?;
+
+        result.insert(
+            hash.into_string(),
+            NeonLibGlobals {
+                lib,
+                config,
+                context,
+            },
+        );
     }
     Ok(result)
 }
