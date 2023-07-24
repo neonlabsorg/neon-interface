@@ -3,6 +3,7 @@ use abi_stable::{
     DynTrait, StableAbi,
 };
 use async_ffi::BorrowingFfiFuture;
+use serde::{Deserialize, Serialize};
 
 #[repr(C)]
 #[derive(StableAbi)]
@@ -18,11 +19,11 @@ pub struct ContextOpaque;
 
 pub type BoxedContext<'borr> = DynTrait<'borr, RBox<()>, ContextOpaque>;
 
-#[repr(C)]
-#[derive(StableAbi)]
-#[sabi(impl_InterfaceType(Debug, Display))]
-pub struct NeonErrorOpaque;
+pub type RNeonResult<'a> = BorrowingFfiFuture<'a, RResult<RString, RString>>;
 
-pub type BoxedNeonError<'borr> = DynTrait<'borr, RBox<()>, NeonErrorOpaque>;
-
-pub type RNeonResult<'a> = BorrowingFfiFuture<'a, RResult<RString, BoxedNeonError<'static>>>;
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct NeonLibError {
+    pub code: u32,
+    pub message: String,
+    pub data: Option<serde_json::Value>,
+}

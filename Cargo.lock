@@ -182,6 +182,8 @@ version = "0.1.0"
 dependencies = [
  "abi_stable",
  "async-ffi",
+ "serde",
+ "serde_json",
  "thiserror",
 ]
 

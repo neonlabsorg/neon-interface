@@ -13,7 +13,7 @@ use abi_stable::{
 use async_ffi::BorrowingFfiFuture;
 use thiserror::Error;
 
-use crate::types::{BoxedConfig, BoxedContext, BoxedNeonError, RNeonResult};
+use crate::types::{BoxedConfig, BoxedContext, RNeonResult};
 
 #[repr(C)]
 #[derive(StableAbi)]
@@ -21,38 +21,22 @@ use crate::types::{BoxedConfig, BoxedContext, BoxedNeonError, RNeonResult};
 #[sabi(missing_field(panic))]
 pub struct NeonLib {
     pub hash: extern "C" fn() -> RString,
-    pub init_config: extern "C" fn(&RStr) -> RResult<BoxedConfig<'static>, BoxedNeonError<'static>>,
-    pub init_context: extern "C" fn(
-        &BoxedConfig,
-        &RStr,
-    ) -> RResult<BoxedContext<'static>, BoxedNeonError<'static>>,
-    pub init_hash_context: for<'a> extern "C" fn(
-        &'a BoxedConfig,
-        &'a RStr,
-    ) -> BorrowingFfiFuture<
-        'a,
-        RResult<BoxedContext<'static>, BoxedNeonError<'static>>,
-    >,
+    pub get_version: extern "C" fn() -> RString,
+    pub init_config: extern "C" fn(&RStr) -> RResult<BoxedConfig<'static>, RString>,
+    pub init_context: extern "C" fn(&BoxedConfig, &RStr) -> RResult<BoxedContext<'static>, RString>,
+    pub init_hash_context:
+        for<'a> extern "C" fn(
+            &'a BoxedConfig,
+            &'a RStr,
+        )
+            -> BorrowingFfiFuture<'a, RResult<BoxedContext<'static>, RString>>,
 
-    pub cancel_trx:
-        for<'a> extern "C" fn(&'a BoxedConfig, &'a BoxedContext, &'a RStr) -> RNeonResult<'a>,
-    pub collect_treasury:
-        for<'a> extern "C" fn(&'a BoxedConfig, &'a BoxedContext, &'a RStr) -> RNeonResult<'a>,
-    pub create_ether_account:
-        for<'a> extern "C" fn(&'a BoxedConfig, &'a BoxedContext, &'a RStr) -> RNeonResult<'a>,
-    pub deposit:
-        for<'a> extern "C" fn(&'a BoxedConfig, &'a BoxedContext, &'a RStr) -> RNeonResult<'a>,
-    pub emulate:
-        for<'a> extern "C" fn(&'a BoxedConfig, &'a BoxedContext, &'a RStr) -> RNeonResult<'a>,
-    pub get_ether_account_data:
-        for<'a> extern "C" fn(&'a BoxedConfig, &'a BoxedContext, &'a RStr) -> RNeonResult<'a>,
-    pub get_neon_elf:
-        for<'a> extern "C" fn(&'a BoxedConfig, &'a BoxedContext, &'a RStr) -> RNeonResult<'a>,
-    pub get_storage_at:
-        for<'a> extern "C" fn(&'a BoxedConfig, &'a BoxedContext, &'a RStr) -> RNeonResult<'a>,
-    #[sabi(last_prefix_field)]
-    pub init_environment:
-        for<'a> extern "C" fn(&'a BoxedConfig, &'a BoxedContext, &'a RStr) -> RNeonResult<'a>,
+    pub invoke: for<'a> extern "C" fn(
+        &'a BoxedConfig,
+        &'a BoxedContext,
+        &'a RStr,
+        &'a RStr,
+    ) -> RNeonResult<'a>,
 }
 
 impl RootModule for NeonLib_Ref {
@@ -64,14 +48,14 @@ impl RootModule for NeonLib_Ref {
 }
 
 #[derive(Error, Debug)]
-pub enum NeonLibError {
+pub enum NeonLoadLibError {
     #[error("abi_stable library error")]
     LibraryError(#[from] LibraryError),
     #[error("IO error")]
     IoError(#[from] std::io::Error),
 }
 
-pub fn load_libraries<P>(directory: P) -> Result<HashMap<String, NeonLib_Ref>, NeonLibError>
+pub fn load_libraries<P>(directory: P) -> Result<HashMap<String, NeonLib_Ref>, NeonLoadLibError>
 where
     P: AsRef<Path>,
 {
