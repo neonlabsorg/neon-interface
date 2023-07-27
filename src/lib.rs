@@ -7,13 +7,12 @@ use std::{collections::HashMap, path::Path};
 use abi_stable::{
     library::{LibraryError, RootModule},
     package_version_strings,
-    std_types::{RResult, RStr, RString},
+    std_types::{RStr, RString},
     StableAbi,
 };
-use async_ffi::BorrowingFfiFuture;
 use thiserror::Error;
 
-use crate::types::{BoxedConfig, BoxedContext, RNeonResult};
+use crate::types::RNeonResult;
 
 #[repr(C)]
 #[derive(StableAbi)]
@@ -22,21 +21,8 @@ use crate::types::{BoxedConfig, BoxedContext, RNeonResult};
 pub struct NeonLib {
     pub hash: extern "C" fn() -> RString,
     pub get_version: extern "C" fn() -> RString,
-    pub init_config: extern "C" fn(RStr) -> RResult<BoxedConfig<'static>, RString>,
-    pub init_context: extern "C" fn(&BoxedConfig, RStr) -> RResult<BoxedContext<'static>, RString>,
-    pub init_hash_context:
-        for<'a> extern "C" fn(
-            &'a BoxedConfig,
-            RStr<'a>,
-        )
-            -> BorrowingFfiFuture<'a, RResult<BoxedContext<'static>, RString>>,
 
-    pub invoke: for<'a> extern "C" fn(
-        &'a BoxedConfig,
-        &'a BoxedContext,
-        RStr<'a>,
-        RStr<'a>,
-    ) -> RNeonResult<'a>,
+    pub invoke: for<'a> extern "C" fn(RStr<'a>, RStr<'a>) -> RNeonResult<'a>,
 }
 
 impl RootModule for NeonLib_Ref {
@@ -53,27 +39,9 @@ pub enum NeonLoadLibError {
     LibraryError(#[from] LibraryError),
     #[error("IO error")]
     IoError(#[from] std::io::Error),
-    #[error("InitConfigAndContext error")]
-    InitConfigAndContext(String),
 }
 
-pub struct NeonLibGlobals {
-    pub lib: NeonLib_Ref,
-    pub config: BoxedConfig<'static>,
-    pub context: BoxedContext<'static>,
-}
-
-impl From<RString> for NeonLoadLibError {
-    fn from(value: RString) -> Self {
-        NeonLoadLibError::InitConfigAndContext(value.to_string())
-    }
-}
-
-pub fn load_libraries<P>(
-    directory: P,
-    api_config: &str,
-    context_config: &str,
-) -> Result<HashMap<String, NeonLibGlobals>, NeonLoadLibError>
+pub fn load_libraries<P>(directory: P) -> Result<HashMap<String, NeonLib_Ref>, NeonLoadLibError>
 where
     P: AsRef<Path>,
 {
@@ -83,17 +51,7 @@ where
         let lib = NeonLib_Ref::load_from_file(&path?.path())?;
         let hash = lib.hash()();
 
-        let config = lib.init_config()(RStr::from_str(api_config)).into_result()?;
-        let context = lib.init_context()(&config, RStr::from_str(context_config)).into_result()?;
-
-        result.insert(
-            hash.into_string(),
-            NeonLibGlobals {
-                lib,
-                config,
-                context,
-            },
-        );
+        result.insert(hash.into_string(), lib);
     }
     Ok(result)
 }

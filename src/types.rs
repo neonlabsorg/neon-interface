@@ -1,23 +1,6 @@
-use abi_stable::{
-    std_types::{RBox, RResult, RString},
-    DynTrait, StableAbi,
-};
+use abi_stable::std_types::{RResult, RString};
 use async_ffi::BorrowingFfiFuture;
 use serde::{Deserialize, Serialize};
-
-#[repr(C)]
-#[derive(StableAbi)]
-#[sabi(impl_InterfaceType(Sync, Send, Debug))]
-pub struct ConfigOpaque;
-
-pub type BoxedConfig<'borr> = DynTrait<'borr, RBox<()>, ConfigOpaque>;
-
-#[repr(C)]
-#[derive(StableAbi)]
-#[sabi(impl_InterfaceType(Sync, Send))]
-pub struct ContextOpaque;
-
-pub type BoxedContext<'borr> = DynTrait<'borr, RBox<()>, ContextOpaque>;
 
 pub type RNeonResult<'a> = BorrowingFfiFuture<'a, RResult<RString, RString>>;
 
